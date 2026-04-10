@@ -5,26 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chiến Dịch Làm Sạch Đại Dương</title>
     <style>
-        body { 
-            margin: 0; text-align: center; background-color: #f0f4f8; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            color: #2c3e50;
-            overflow: hidden; touch-action: manipulation;
+        /* Đồng nhất font chữ toàn bộ hệ thống */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            box-sizing: border-box;
         }
-        #gameWrapper { width: 100%; max-width: 800px; margin: 0 auto; padding: 10px; box-sizing: border-box; position: relative; }
+        
+        body { 
+            margin: 0; 
+            text-align: center; 
+            background-color: #f0f4f8; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #2c3e50;
+            overflow: hidden; 
+            touch-action: manipulation;
+        }
+
+        #gameWrapper { width: 100%; max-width: 800px; margin: 0 auto; padding: 10px; position: relative; }
+        
         canvas { 
             width: 100%; height: auto; border: 6px solid #00acc1; 
             background-color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 12px;
             display: block;
         }
-        .stats { display: flex; justify-content: center; gap: 20px; font-size: 1.1em; font-weight: bold; margin: 10px 0; }
+
+        /* Đảm bảo font chữ ở các chỉ số đều nhau */
+        .stats { 
+            display: flex; justify-content: center; gap: 20px; 
+            font-size: 1.1em; font-weight: 700; margin: 10px 0; 
+        }
+
         .controls { margin-bottom: 10px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; min-height: 50px; }
         
         button { 
             padding: 10px 18px; font-size: 14px; cursor: pointer; border: none; 
-            border-radius: 25px; color: white; font-weight: bold;
+            border-radius: 25px; color: white; font-weight: 700;
+            font-family: inherit; /* Giữ font đồng nhất */
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;
-            -webkit-appearance: none; /* Fix style cho iOS */
+            -webkit-appearance: none;
         }
         
         .btn-time { background: #00bcd4; }
@@ -33,32 +52,44 @@
         #pauseBtn { background: linear-gradient(135deg, #fb8c00, #ef6c00); display: none; }
         #resetBtn { background: linear-gradient(135deg, #e53935, #b71c1c); display: none; }
         
+        /* Màn hình tạm dừng - Đã fix font và khoảng cách */
         #pauseOverlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 50, 50, 0.9); display: none; border-radius: 12px;
             flex-direction: column; justify-content: center; align-items: center;
-            color: white; z-index: 10; pointer-events: none; padding: 20px; box-sizing: border-box;
+            color: white; z-index: 10; pointer-events: none; padding: 20px;
             text-align: center;
         }
         
-        #pauseOverlay h2 { margin: 0 0 15px 0; font-size: 8vw; color: #ffeb3b; line-height: 1.2; }
-        #pauseOverlay p { margin: 0 0 10px 0; font-size: 4vw; line-height: 1.4; }
-        #pauseOverlay .sub-note { font-size: 3.5vw; font-style: italic; color: #b2ebf2; margin-top: 15px; }
+        #pauseOverlay h2 { 
+            margin: 0 0 15px 0; font-size: 8vw; color: #ffeb3b; 
+            font-weight: 800; line-height: 1.2; font-family: inherit;
+        }
+        
+        #pauseOverlay p { 
+            margin: 0 0 10px 0; font-size: 4.5vw; 
+            font-weight: 500; line-height: 1.4; font-family: inherit;
+        }
+        
+        #pauseOverlay .sub-note { 
+            font-size: 3.8vw; font-style: italic; color: #b2ebf2; 
+            margin-top: 15px; font-family: inherit;
+        }
 
         @media (min-width: 600px) {
-            #pauseOverlay h2 { font-size: 2.5em; }
-            #pauseOverlay p { font-size: 1.3em; }
+            #pauseOverlay h2 { font-size: 2.8em; }
+            #pauseOverlay p { font-size: 1.4em; }
             #pauseOverlay .sub-note { font-size: 1.1em; }
         }
 
-        .note { font-size: 0.9em; color: #00796b; font-style: italic; margin-bottom: 5px; }
+        .note { font-size: 0.95em; color: #00796b; font-style: italic; margin-bottom: 5px; font-weight: 500; }
         #timeModeContainer { display: flex; gap: 5px; align-items: center; }
     </style>
 </head>
 <body>
 
     <div id="gameWrapper">
-        <h1 style="color: #00796b; margin-bottom: 5px;">🌊 GIẢI CỨU ĐẠI DƯƠNG</h1>
+        <h1 style="color: #00796b; margin-bottom: 5px; font-weight: 800;">🌊 GIẢI CỨU ĐẠI DƯƠNG</h1>
         <div class="note">Cùng nhau dọn rác để bảo vệ môi trường biển nhé! ✨</div>
         
         <div class="controls">
@@ -83,7 +114,7 @@
             <div id="pauseOverlay">
                 <h2>⏸️ ĐANG TẠM DỪNG</h2>
                 <p>Nghỉ tay một xíu rồi quay lại nhé!</p>
-                <div class="sub-note">Đại đương và các bạn cá vẫn đang đợi bạn đó... ✨</div>
+                <div class="sub-note">Đại dương và các bạn cá vẫn đang đợi bạn đó... ✨</div>
             </div>
         </div>
     </div>
@@ -192,7 +223,7 @@
             
             drawBackground();
             ctx.fillStyle = "#00796b";
-            ctx.font = "bold 22px sans-serif";
+            ctx.font = "700 22px sans-serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("Chào mừng bạn đến với chiến dịch dọn rác biển!", canvas.width/2, canvas.height/2 + 40);
@@ -212,7 +243,7 @@
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             
-            ctx.fillStyle = "#ffeb3b"; ctx.font = "bold 28px sans-serif";
+            ctx.fillStyle = "#ffeb3b"; ctx.font = "800 28px sans-serif";
             ctx.fillText(isSurrender ? "Hẹn gặp lại bạn lần sau!" : "Chúc mừng bạn đã hoàn thành nhiệm vụ!", canvas.width/2, canvas.height/2 - 20);
             
             startBtn.style.display = "inline-block";
@@ -232,7 +263,6 @@
                 gameTick += dt;
                 drawBackground();
 
-                // Cài đặt chung cho text trong Canvas (Safari fix)
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
 
@@ -294,7 +324,7 @@
 
                 floatingScores.forEach((fs, i) => {
                     ctx.fillStyle = `rgba(255, 235, 59, ${fs.life})`;
-                    ctx.font = "bold 24px sans-serif";
+                    ctx.font = "700 24px sans-serif";
                     ctx.fillText(fs.val, fs.x, fs.y);
                     fs.y -= 1; fs.life -= dt;
                     if (fs.life <= 0) floatingScores.splice(i, 1);
@@ -302,7 +332,7 @@
 
                 if (alertTimer > 0) {
                     ctx.fillStyle = "#ff5252";
-                    ctx.font = "bold 22px sans-serif";
+                    ctx.font = "800 22px sans-serif";
                     ctx.fillText(alertText, canvas.width/2, 100); 
                     alertTimer -= dt;
                 }

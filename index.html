@@ -86,7 +86,7 @@
         let hook = {
             x: canvas.width / 2, y: 55, angle: 0, angleDir: 1, length: 40,
             extending: false, returning: false, 
-            baseSpeed: 3, // TỐC ĐỘ NÉM DÂY ĐÃ CHỈNH THÀNH 3
+            baseSpeed: 3, 
             currentPullSpeed: 2.5, 
             rotationSpeed: 0.012,
             targetItem: null
@@ -127,6 +127,8 @@
                     size: isFish ? (Math.random() * 12 + 35) : (Math.random() * 10 + 30),
                     type: type, 
                     points: selectedEmoji === '👞' ? 100 : 50,
+                    // THU DÂY KHI TRÚNG VẬT THƯỜNG LÀ 1.3, GIÀY LÀ 0.7
+                    pullSpeed: selectedEmoji === '👞' ? 0.7 : 1.3,
                     offset: Math.random() * 200, swimSpeed: Math.random() * 0.04 + 0.02
                 };
                 if (!items.some(item => getDistance(newItem.x, newItem.y, item.x, item.y) < 80)) break;
@@ -220,13 +222,13 @@
                             hook.extending = false; 
                             hook.returning = true; 
                             hook.targetItem = index;
-                            hook.currentPullSpeed = 1.5;
+                            hook.currentPullSpeed = items[index].pullSpeed;
                         }
                     });
                     if (hook.length > 460) { 
                         hook.extending = false; 
                         hook.returning = true;
-                        hook.currentPullSpeed = 2.5;
+                        hook.currentPullSpeed = 2.5; 
                     }
                 } else if (hook.returning) {
                     hook.length -= hook.currentPullSpeed;

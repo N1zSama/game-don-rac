@@ -90,7 +90,6 @@
             targetItem: null
         };
 
-        // TrashPool 20 phần tử, 3 Giày = 15%
         const trashPool = [
             '🦴', '🦴', '🦴', '🦴', '🦴', '🦴', 
             '🍎', '🍎', '🍎', '🍎', '🍎', '🍎', 
@@ -102,7 +101,7 @@
         timeButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (!isStarted) {
+                if (!isStarted || isGameOver) {
                     timeButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     selectedTime = parseInt(btn.getAttribute('data-time'));
@@ -119,7 +118,6 @@
             let attempts = 0;
             while (attempts < 30) {
                 let selectedEmoji = isFish ? fishEmojis[Math.floor(Math.random()*2)] : trashPool[Math.floor(Math.random()*trashPool.length)];
-                
                 newItem = {
                     x: Math.random() * (canvas.width - 140) + 70,
                     y: Math.random() * (canvas.height - 220) + 160, 
@@ -172,6 +170,7 @@
 
         function endGame(isSurrender = false) {
             isGameOver = true; 
+            isStarted = false; // Reset trạng thái bắt đầu để có thể chọn lại thời gian
             clearInterval(timerInterval);
             if (score > highScore) {
                 highScore = score;
@@ -188,6 +187,7 @@
             ctx.fillStyle = "rgba(255, 255, 255, 0.7)"; ctx.font = "italic 16px Arial";
             ctx.fillText("Đừng quên bảo vệ môi trường cả ở ngoài đời thực nhé! 🌱", canvas.width/2, canvas.height/2 + 80);
             
+            // HIỆN LẠI LỰA CHỌN THỜI GIAN ĐỂ BẮT ĐẦU MỚI
             startBtn.style.display = "inline-block";
             pauseBtn.style.display = "none";
             resetBtn.style.display = "none";

@@ -7,13 +7,15 @@
     <style>
         body { 
             margin: 0; text-align: center; background-color: #f0f4f8; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2c3e50;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            color: #2c3e50;
             overflow: hidden; touch-action: manipulation;
         }
         #gameWrapper { width: 100%; max-width: 800px; margin: 0 auto; padding: 10px; box-sizing: border-box; position: relative; }
         canvas { 
             width: 100%; height: auto; border: 6px solid #00acc1; 
             background-color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 12px;
+            display: block;
         }
         .stats { display: flex; justify-content: center; gap: 20px; font-size: 1.1em; font-weight: bold; margin: 10px 0; }
         .controls { margin-bottom: 10px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; min-height: 50px; }
@@ -22,6 +24,7 @@
             padding: 10px 18px; font-size: 14px; cursor: pointer; border: none; 
             border-radius: 25px; color: white; font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;
+            -webkit-appearance: none; /* Fix style cho iOS */
         }
         
         .btn-time { background: #00bcd4; }
@@ -30,7 +33,6 @@
         #pauseBtn { background: linear-gradient(135deg, #fb8c00, #ef6c00); display: none; }
         #resetBtn { background: linear-gradient(135deg, #e53935, #b71c1c); display: none; }
         
-        /* Màn hình tạm dừng - Đã fix lỗi hiển thị trên điện thoại */
         #pauseOverlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 50, 50, 0.9); display: none; border-radius: 12px;
@@ -39,27 +41,10 @@
             text-align: center;
         }
         
-        #pauseOverlay h2 { 
-            margin: 0 0 15px 0; 
-            font-size: 8vw; /* Chữ co giãn theo màn hình */
-            color: #ffeb3b; 
-            line-height: 1.2;
-        }
-        
-        #pauseOverlay p { 
-            margin: 0 0 10px 0; 
-            font-size: 4vw; 
-            line-height: 1.4; 
-        }
-        
-        #pauseOverlay .sub-note { 
-            font-size: 3.5vw; 
-            font-style: italic; 
-            color: #b2ebf2; 
-            margin-top: 15px;
-        }
+        #pauseOverlay h2 { margin: 0 0 15px 0; font-size: 8vw; color: #ffeb3b; line-height: 1.2; }
+        #pauseOverlay p { margin: 0 0 10px 0; font-size: 4vw; line-height: 1.4; }
+        #pauseOverlay .sub-note { font-size: 3.5vw; font-style: italic; color: #b2ebf2; margin-top: 15px; }
 
-        /* Điều chỉnh cho màn hình lớn (Máy tính) */
         @media (min-width: 600px) {
             #pauseOverlay h2 { font-size: 2.5em; }
             #pauseOverlay p { font-size: 1.3em; }
@@ -98,7 +83,7 @@
             <div id="pauseOverlay">
                 <h2>⏸️ ĐANG TẠM DỪNG</h2>
                 <p>Nghỉ tay một xíu rồi quay lại nhé!</p>
-                <div class="sub-note">Đại dương và các bạn cá vẫn đang đợi bạn đó... ✨</div>
+                <div class="sub-note">Đại đương và các bạn cá vẫn đang đợi bạn đó... ✨</div>
             </div>
         </div>
     </div>
@@ -153,7 +138,6 @@
         function createItem(type, excludeEmoji = null) {
             const isFish = type === 'fish';
             let selectedEmoji;
-
             if (isFish) {
                 selectedEmoji = fishEmojis[Math.floor(Math.random() * fishEmojis.length)];
             } else {
@@ -205,14 +189,13 @@
             items = [];
             for(let i=0; i<6; i++) items.push(createItem('trash'));
             for(let i=0; i<3; i++) items.push(createItem('fish'));
-            drawBackground();
             
+            drawBackground();
             ctx.fillStyle = "#00796b";
-            ctx.font = "bold 22px Arial";
+            ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
             ctx.fillText("Chào mừng bạn đến với chiến dịch dọn rác biển!", canvas.width/2, canvas.height/2 + 40);
-            ctx.font = "18px Arial";
-            ctx.fillText("Hãy nhấn nút Bắt đầu để cùng giải cứu đại dương.", canvas.width/2, canvas.height/2 + 75);
         }
 
         function endGame(isSurrender = false) {
@@ -227,13 +210,10 @@
             ctx.fillStyle = "rgba(0, 50, 50, 0.9)"; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
             
-            ctx.fillStyle = "#ffeb3b"; ctx.font = "bold 28px Arial";
+            ctx.fillStyle = "#ffeb3b"; ctx.font = "bold 28px sans-serif";
             ctx.fillText(isSurrender ? "Hẹn gặp lại bạn lần sau!" : "Chúc mừng bạn đã hoàn thành nhiệm vụ!", canvas.width/2, canvas.height/2 - 20);
-            ctx.fillStyle = "white"; ctx.font = "20px Arial";
-            ctx.fillText("Kết quả: Bạn đã thu gom được " + score + " điểm rác.", canvas.width/2, canvas.height/2 + 25);
-            ctx.fillStyle = "#b2ebf2"; ctx.font = "italic 16px Arial";
-            ctx.fillText("Cảm ơn bạn đã góp sức bảo vệ môi trường biển sạch đẹp hơn.", canvas.width/2, canvas.height/2 + 65);
             
             startBtn.style.display = "inline-block";
             timeModeContainer.style.display = "flex";
@@ -252,9 +232,13 @@
                 gameTick += dt;
                 drawBackground();
 
+                // Cài đặt chung cho text trong Canvas (Safari fix)
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+
                 items.forEach(item => {
                     let swimX = item.type === 'fish' ? Math.sin((gameTick * 2 + item.offset)) * 10 : 0;
-                    ctx.font = `${item.size}px Arial`; ctx.textAlign = "center";
+                    ctx.font = `${item.size}px sans-serif`;
                     ctx.fillText(item.emoji, item.x + swimX, item.y);
                 });
 
@@ -284,10 +268,7 @@
                     if (hook.length <= 40) {
                         if (hook.targetItem !== null) {
                             const caught = items[hook.targetItem];
-                            const caughtType = caught.type;
-                            const caughtEmoji = caught.emoji;
-
-                            if (caughtType === 'fish') {
+                            if (caught.type === 'fish') {
                                 timeLeft -= 5; 
                                 alertText = "Chú ý: Đừng bắt nhầm cá bạn nhé! (-5s)"; 
                                 alertTimer = 2.0; 
@@ -296,9 +277,8 @@
                                 scoreDisplay.innerText = score;
                                 floatingScores.push({ x: hook.x, y: hook.y + 40, val: "+" + caught.points, life: 1.0 });
                             }
-                            
                             items.splice(hook.targetItem, 1); 
-                            items.push(createItem(caughtType, caughtEmoji));
+                            items.push(createItem(caught.type, caught.emoji));
                         }
                         hook.targetItem = null; hook.returning = false;
                         hook.length = 40;
@@ -309,11 +289,12 @@
                 const hY = hook.y + Math.cos(hook.angle) * hook.length;
                 ctx.beginPath(); ctx.moveTo(hook.x, hook.y); ctx.lineTo(hX, hY);
                 ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.stroke();
-                ctx.font = "30px Arial"; ctx.fillText("⚓", hX, hY);
+                ctx.font = "30px sans-serif"; 
+                ctx.fillText("⚓", hX, hY);
 
                 floatingScores.forEach((fs, i) => {
                     ctx.fillStyle = `rgba(255, 235, 59, ${fs.life})`;
-                    ctx.font = "bold 24px Arial";
+                    ctx.font = "bold 24px sans-serif";
                     ctx.fillText(fs.val, fs.x, fs.y);
                     fs.y -= 1; fs.life -= dt;
                     if (fs.life <= 0) floatingScores.splice(i, 1);
@@ -321,7 +302,7 @@
 
                 if (alertTimer > 0) {
                     ctx.fillStyle = "#ff5252";
-                    ctx.font = "bold 22px Arial";
+                    ctx.font = "bold 22px sans-serif";
                     ctx.fillText(alertText, canvas.width/2, 100); 
                     alertTimer -= dt;
                 }

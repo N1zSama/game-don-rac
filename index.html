@@ -30,16 +30,41 @@
         #pauseBtn { background: linear-gradient(135deg, #fb8c00, #ef6c00); display: none; }
         #resetBtn { background: linear-gradient(135deg, #e53935, #b71c1c); display: none; }
         
-        /* Màn hình tạm dừng - Đã tách rộng theo chiều dọc */
+        /* Màn hình tạm dừng - Đã fix lỗi hiển thị trên điện thoại */
         #pauseOverlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 50, 50, 0.85); display: none; border-radius: 12px;
+            background: rgba(0, 50, 50, 0.9); display: none; border-radius: 12px;
             flex-direction: column; justify-content: center; align-items: center;
-            color: white; z-index: 10; pointer-events: none; padding: 30px; box-sizing: border-box;
+            color: white; z-index: 10; pointer-events: none; padding: 20px; box-sizing: border-box;
+            text-align: center;
         }
-        #pauseOverlay h2 { margin: 0 0 25px 0; font-size: 2.2em; color: #ffeb3b; letter-spacing: 1px; }
-        #pauseOverlay p { margin: 0 0 15px 0; font-size: 1.3em; line-height: 1.6; }
-        #pauseOverlay .sub-note { font-size: 1.05em; font-style: italic; color: #b2ebf2; opacity: 0.9; margin-top: 20px; }
+        
+        #pauseOverlay h2 { 
+            margin: 0 0 15px 0; 
+            font-size: 8vw; /* Chữ co giãn theo màn hình */
+            color: #ffeb3b; 
+            line-height: 1.2;
+        }
+        
+        #pauseOverlay p { 
+            margin: 0 0 10px 0; 
+            font-size: 4vw; 
+            line-height: 1.4; 
+        }
+        
+        #pauseOverlay .sub-note { 
+            font-size: 3.5vw; 
+            font-style: italic; 
+            color: #b2ebf2; 
+            margin-top: 15px;
+        }
+
+        /* Điều chỉnh cho màn hình lớn (Máy tính) */
+        @media (min-width: 600px) {
+            #pauseOverlay h2 { font-size: 2.5em; }
+            #pauseOverlay p { font-size: 1.3em; }
+            #pauseOverlay .sub-note { font-size: 1.1em; }
+        }
 
         .note { font-size: 0.9em; color: #00796b; font-style: italic; margin-bottom: 5px; }
         #timeModeContainer { display: flex; gap: 5px; align-items: center; }

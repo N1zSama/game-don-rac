@@ -85,7 +85,9 @@
 
         let hook = {
             x: canvas.width / 2, y: 55, angle: 0, angleDir: 1, length: 40,
-            extending: false, returning: false, baseSpeed: 4, pullSpeed: 1.0, 
+            extending: false, returning: false, 
+            baseSpeed: 3, // TỐC ĐỘ NÉM DÂY ĐÃ CHỈNH THÀNH 3
+            currentPullSpeed: 2.5, 
             rotationSpeed: 0.012,
             targetItem: null
         };
@@ -124,7 +126,7 @@
                     emoji: selectedEmoji,
                     size: isFish ? (Math.random() * 12 + 35) : (Math.random() * 10 + 30),
                     type: type, 
-                    points: selectedEmoji === '👞' ? 100 : 50, 
+                    points: selectedEmoji === '👞' ? 100 : 50,
                     offset: Math.random() * 200, swimSpeed: Math.random() * 0.04 + 0.02
                 };
                 if (!items.some(item => getDistance(newItem.x, newItem.y, item.x, item.y) < 80)) break;
@@ -170,7 +172,7 @@
 
         function endGame(isSurrender = false) {
             isGameOver = true; 
-            isStarted = false; // Reset trạng thái bắt đầu để có thể chọn lại thời gian
+            isStarted = false;
             clearInterval(timerInterval);
             if (score > highScore) {
                 highScore = score;
@@ -187,7 +189,6 @@
             ctx.fillStyle = "rgba(255, 255, 255, 0.7)"; ctx.font = "italic 16px Arial";
             ctx.fillText("Đừng quên bảo vệ môi trường cả ở ngoài đời thực nhé! 🌱", canvas.width/2, canvas.height/2 + 80);
             
-            // HIỆN LẠI LỰA CHỌN THỜI GIAN ĐỂ BẮT ĐẦU MỚI
             startBtn.style.display = "inline-block";
             pauseBtn.style.display = "none";
             resetBtn.style.display = "none";
@@ -212,14 +213,23 @@
                     hook.angle += hook.rotationSpeed * hook.angleDir;
                     if (Math.abs(hook.angle) > 1.4) hook.angleDir *= -1;
                 } else if (hook.extending) {
-                    hook.length += hook.baseSpeed;
+                    hook.length += hook.baseSpeed; 
                     items.forEach((item, index) => {
                         let d = getDistance(hook.x + Math.sin(hook.angle)*hook.length, hook.y + Math.cos(hook.angle)*hook.length, item.x, item.y);
-                        if (d < 30) { hook.extending = false; hook.returning = true; hook.targetItem = index; }
+                        if (d < 30) { 
+                            hook.extending = false; 
+                            hook.returning = true; 
+                            hook.targetItem = index;
+                            hook.currentPullSpeed = 1.5;
+                        }
                     });
-                    if (hook.length > 460) { hook.extending = false; hook.returning = true; }
+                    if (hook.length > 460) { 
+                        hook.extending = false; 
+                        hook.returning = true;
+                        hook.currentPullSpeed = 2.5;
+                    }
                 } else if (hook.returning) {
-                    hook.length -= (hook.targetItem !== null) ? hook.pullSpeed : hook.baseSpeed;
+                    hook.length -= hook.currentPullSpeed;
                     if (hook.targetItem !== null) {
                         items[hook.targetItem].x = hook.x + Math.sin(hook.angle) * hook.length;
                         items[hook.targetItem].y = hook.y + Math.cos(hook.angle) * hook.length;

@@ -9,16 +9,21 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             box-sizing: border-box;
+            /* Ngăn chặn việc zoom chữ tự động trên một số điện thoại */
+            text-size-adjust: none;
+            -webkit-text-size-adjust: none;
         }
         
         body { 
             margin: 0; 
             text-align: center; 
             background-color: #f0f4f8; 
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            /* Bộ font ổn định nhất cho mobile */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
             color: #2c3e50;
             overflow: hidden; 
             touch-action: manipulation;
+            line-height: 1.5;
         }
 
         #gameWrapper { width: 100%; max-width: 800px; margin: 0 auto; padding: 10px; position: relative; }
@@ -60,7 +65,15 @@
         
         #pauseOverlay h2 { margin: 0 0 15px 0; font-size: 8vw; color: #ffeb3b; font-weight: 800; line-height: 1.2; }
         #pauseOverlay p { margin: 0 0 10px 0; font-size: 4.5vw; font-weight: 500; line-height: 1.4; }
-        #pauseOverlay .sub-note { font-size: 3.8vw; font-style: italic; color: #b2ebf2; margin-top: 15px; }
+        
+        /* Fix lỗi ngôi sao nhảy hàng */
+        #pauseOverlay .sub-note { 
+            font-size: 3.8vw; font-style: italic; color: #b2ebf2; 
+            margin-top: 15px; 
+            white-space: nowrap; /* Giữ ngôi sao và chữ cùng 1 dòng */
+            display: block;
+            width: 100%;
+        }
 
         @media (min-width: 600px) {
             #pauseOverlay h2 { font-size: 2.8em; }
@@ -75,7 +88,7 @@
 <body>
 
     <div id="gameWrapper">
-        <h1 style="color: #00796b; margin-bottom: 5px; font-weight: 800;">🌊 GIẢI CỨU ĐẠI DƯƠNG</h1>
+        <h1 style="color: #00796b; margin-bottom: 5px; font-weight: 800; font-size: 1.8em;">🌊 GIẢI CỨU ĐẠI DƯƠNG</h1>
         <div class="note">Cùng nhau dọn rác để bảo vệ môi trường biển nhé! ✨</div>
         
         <div class="controls">
@@ -117,8 +130,8 @@
         const timeButtons = document.querySelectorAll('.btn-time');
         const pauseOverlay = document.getElementById('pauseOverlay');
 
-        // Thiết lập font cho iOS
-        const uiFontBold = 'bold 22px -apple-system, system-ui, sans-serif';
+        // Font dự phòng ổn định nhất cho Canvas mobile
+        const canvasFont = 'Arial, -apple-system, sans-serif';
 
         let score, timeLeft, isGameOver, isPaused, isStarted, timerInterval, items, animationId;
         let selectedTime = 60, gameTick = 0, alertText = "", alertTimer = 0;
@@ -134,8 +147,7 @@
             x: canvas.width / 2, y: 55, angle: 0, angleDir: 1, length: 40,
             extending: false, returning: false, 
             baseSpeed: 180, missReturnSpeed: 150, 
-            rotationSpeed: 1.1, // TỐC ĐỘ ĐÃ ĐƯỢC CÂN BẰNG (mượt hơn)
-            maxAngle: 1.4,
+            rotationSpeed: 1.1, maxAngle: 1.4,
             currentPullSpeed: 0, targetItem: null
         };
 
@@ -216,7 +228,7 @@
             drawBackground();
             ctx.save();
             ctx.fillStyle = "#00796b";
-            ctx.font = uiFontBold;
+            ctx.font = `bold 22px ${canvasFont}`;
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("Chào mừng bạn đến với chiến dịch dọn rác biển!", canvas.width/2, canvas.height/2 + 40);
@@ -239,20 +251,20 @@
             ctx.textBaseline = "middle";
             
             ctx.fillStyle = "#ffeb3b"; 
-            ctx.font = '800 32px -apple-system, sans-serif';
+            ctx.font = `800 32px ${canvasFont}`;
             ctx.fillText(isSurrender ? "HẸN GẶP LẠI BẠN!" : "NHIỆM VỤ HOÀN THÀNH!", canvas.width/2, canvas.height/2 - 70);
             
             ctx.fillStyle = "white"; 
-            ctx.font = '600 22px -apple-system, sans-serif';
+            ctx.font = `bold 22px ${canvasFont}`;
             ctx.fillText("Bạn đã giúp đại dương nhặt được " + trashCollectedCount + " món rác.", canvas.width/2, canvas.height/2 - 20);
             ctx.fillText("Tổng điểm tích lũy: " + score + " điểm.", canvas.width/2, canvas.height/2 + 15);
 
             ctx.fillStyle = "#b2ebf2"; 
-            ctx.font = 'italic 18px -apple-system, sans-serif';
+            ctx.font = `italic 18px ${canvasFont}`;
             ctx.fillText("Đại dương xanh cảm ơn sự đóng góp của bạn! ✨", canvas.width/2, canvas.height/2 + 60);
 
             ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-            ctx.font = '500 15px -apple-system, sans-serif';
+            ctx.font = `500 15px ${canvasFont}`;
             ctx.fillText("Lưu ý: Đừng vứt rác bừa bãi ngoài đời thực nhé, hãy bảo vệ môi trường! 🌱", canvas.width/2, canvas.height - 40);
             ctx.restore();
             
@@ -278,7 +290,6 @@
                     let swimX = item.type === 'fish' ? Math.sin((gameTick * 2 + item.offset)) * 10 : 0;
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
-                    // Ép font Apple Color Emoji cho iOS
                     ctx.font = `${item.size}px "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
                     ctx.fillText(item.emoji, item.x + swimX, item.y);
                     ctx.restore();
@@ -344,7 +355,7 @@
                 floatingScores.forEach((fs, i) => {
                     ctx.save();
                     ctx.fillStyle = `rgba(255, 235, 59, ${fs.life})`;
-                    ctx.font = 'bold 24px -apple-system, sans-serif';
+                    ctx.font = `bold 24px ${canvasFont}`;
                     ctx.textAlign = "center";
                     ctx.fillText(fs.val, fs.x, fs.y);
                     ctx.restore();
@@ -355,7 +366,7 @@
                 if (alertTimer > 0) {
                     ctx.save();
                     ctx.fillStyle = "#ff5252";
-                    ctx.font = 'bold 22px -apple-system, sans-serif';
+                    ctx.font = `bold 22px ${canvasFont}`;
                     ctx.textAlign = "center";
                     ctx.fillText(alertText, canvas.width/2, 100); 
                     ctx.restore();
